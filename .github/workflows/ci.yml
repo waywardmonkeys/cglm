@@ -34,6 +34,29 @@ jobs:
     - name: Test
       run: make check
 
+  build_cmake_clang_tidy:
+    name: CMake / clang-tidy
+    runs-on: macos-14
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install LLVM
+      run: brew upgrade && brew install llvm
+
+    - name: Configure CMake
+      run: |
+        cmake \
+          -B build \
+          -GXcode \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_C_CLANG_TIDY=$(brew --prefix llvm)/bin/clang-tidy \
+          -DCGLM_STATIC=ON \
+          -DCGLM_USE_TEST=ON
+
+    - name: Build
+      run: cmake --build build
+
   build_cmake_ios:
     name: CMake / iOS
     runs-on: macos-14
